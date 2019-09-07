@@ -192,22 +192,6 @@ with open("100000_labels_mirai.tsv",'r') as x ,open("Mirai_vector.txt",'r') as y
 f1.close()
 f2.close()
 
-import os
-import subprocess
-import csv
-import numpy as np
-import math
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.autograd import Variable
-from sklearn.model_selection import train_test_split
-from sklearn.neural_network import MLPClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn import svm
-from sklearn.mixture import GMM 
-from Kitsune import Kitsune
-
 def extract(v):
     return v.data.storage().tolist()
 
@@ -297,32 +281,32 @@ def decode(s, original_s):
     chr_b = ''.join(chr_b) 
     return chr_b
 
-def restore2packets(gen_examples_str):
-    f = open('Mirai_gen_mal.tsv','w')
-    writer = csv.writer(f, delimiter='\t')
-    rowStrEncs = load_data_str('Mirai_rowStrEnc.txt')
-    masks = load_data_str('Mirai_mask.txt')
-    idx = 0
-    for each_example in gen_examples_str:
-        length = len(rowStrEncs[idx])-1 #注意rowStrEncs[idx]还包括‘\n’
-        rowStrEnc = rowStrEncs[idx][0:length]
-        row_restore = list(each_example[0:length])
-        for i in range(length):
-            if rowStrEnc[i]==' ':
-                row_restore[i]=' '
-            elif masks[idx][i]=='0':
-                row_restore[i]=rowStrEnc[i]
-        row_restore = ''.join(row_restore)
-        print('row_restore')
-        print(row_restore)
-        row_dec_mask = decode(row_restore, rowStrEnc)
-        print('row_dec_mask')
-        print(row_dec_mask)
-        print()
-        row_split = row_dec_mask.split(',')
-        writer.writerow(row_split)
-        idx = idx + 1
-    f.close()
+# def restore2packets(gen_examples_str):
+#     f = open('Mirai_gen_mal.tsv','w')
+#     writer = csv.writer(f, delimiter='\t')
+#     rowStrEncs = load_data_str('Mirai_rowStrEnc.txt')
+#     masks = load_data_str('Mirai_mask.txt')
+#     idx = 0
+#     for each_example in gen_examples_str:
+#         length = len(rowStrEncs[idx])-1 #注意rowStrEncs[idx]还包括‘\n’
+#         rowStrEnc = rowStrEncs[idx][0:length]
+#         row_restore = list(each_example[0:length])
+#         for i in range(length):
+#             if rowStrEnc[i]==' ':
+#                 row_restore[i]=' '
+#             elif masks[idx][i]=='0':
+#                 row_restore[i]=rowStrEnc[i]
+#         row_restore = ''.join(row_restore)
+#         print('row_restore')
+#         print(row_restore)
+#         row_dec_mask = decode(row_restore, rowStrEnc)
+#         print('row_dec_mask')
+#         print(row_dec_mask)
+#         print()
+#         row_split = row_dec_mask.split(',')
+#         writer.writerow(row_split)
+#         idx = idx + 1
+#     f.close()
     
 def gen_vectors_2_packets(gen_examples_numpy, idx, K, threshold): #idx是[1 1 1]的格式
     rowStrEncs = load_data_str('Mirai_rowStrEnc.txt')
