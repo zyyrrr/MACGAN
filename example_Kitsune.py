@@ -18,7 +18,7 @@ import time
 print("Unzipping Sample Capture...")
 import zipfile
 with zipfile.ZipFile("mirai.zip","r") as zip_ref:
-    zip_ref.extractall() #解压缩
+    zip_ref.extractall() #unzip
 
 
 # File location
@@ -54,7 +54,7 @@ print("Complete. Time elapsed: "+ str(stop - start))
 # Here we demonstrate how one can fit the RMSE scores to a log-normal distribution (useful for finding/setting a cutoff threshold \phi)
 from scipy.stats import norm
 benignSample = np.log(RMSEs[FMgrace+ADgrace+1:100000])
-logProbs = norm.logsf(np.log(RMSEs), np.mean(benignSample), np.std(benignSample)) #返回值: log of (1 - log(RMSEs)概率密度函数的积分)
+logProbs = norm.logsf(np.log(RMSEs), np.mean(benignSample), np.std(benignSample)) #Return value: log of (1-log(RMSEs): integral of probability density function)
 
 # plot the RMSE anomaly scores
 print("Plotting results")
@@ -62,7 +62,7 @@ from matplotlib import pyplot as plt
 from matplotlib import cm
 plt.figure(figsize=(10,5))
 fig = plt.scatter(range(FMgrace+ADgrace+1,len(RMSEs)),RMSEs[FMgrace+ADgrace+1:],s=0.1,c=logProbs[FMgrace+ADgrace+1:],cmap='RdYlGn')
-plt.yscale("log") #改变坐标轴的刻度为log
+plt.yscale("log") #Change the scale of the axis to log
 plt.title("Anomaly Scores from Kitsune's Execution Phase")
 plt.ylabel("RMSE (log scaled)")
 plt.xlabel("Time elapsed [min]")
