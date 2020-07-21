@@ -22,7 +22,7 @@ class corClust:
         c_rt = x - self.c/self.N
         self.c_r += c_rt
         self.c_rs += c_rt**2
-        self.C += np.outer(c_rt,c_rt) #两个向量相乘
+        self.C += np.outer(c_rt,c_rt) #Multiply two vectors
 
     # creates the current correlation distance matrix between the features
     def corrDist(self):
@@ -48,7 +48,7 @@ class corClust:
     # a recursive helper function which breaks down the dendrogram branches until all clusters have no more than maxClust elements
     def __breakClust__(self,dendro,maxClust):
         if dendro.count <= maxClust: #base case: we found a minimal cluster, so mark it
-            list_origional_ids = [dendro.pre_order()] #pre_order 二叉树中前序遍历方式
+            list_origional_ids = [dendro.pre_order()] #pre_order Preorder traversal method in binary tree
             print('origional ids of the features')
             print(list_origional_ids)
             return list_origional_ids #return the origional ids of the features in this cluster
