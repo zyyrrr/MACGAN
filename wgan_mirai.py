@@ -105,7 +105,7 @@ def get_next_vector():
     rowStrEnc = encode(rowStr)
 #     print(rowStrEnc)
 #     print()
-    index_list = find_all(' 101100',rowStrEnc) #找','
+    index_list = find_all(' 101100',rowStrEnc) #Find ','
     mask = '0'
     mask = mask.ljust(len(rowStrEnc),'0')
     mask = list(mask)
@@ -122,13 +122,13 @@ def get_next_vector():
             tail = index_list[i]
         for j in range(head,tail):
             mask[j]='1'
-    index_list = find_all(' 111010',rowStrEnc) #找':'
+    index_list = find_all(' 111010',rowStrEnc) #Find ':'
     for i in index_list:
         head = i
         tail = head+len(' 111010')
         for j in range(head,tail):
             mask[j]='0'
-    index_list = find_all(' 101110',rowStrEnc) #找'.'
+    index_list = find_all(' 101110',rowStrEnc) #Find '.'
     for i in index_list:
         head = i
         tail = head+len(' 101110')
@@ -145,7 +145,7 @@ def get_next_vector():
         elif mask[i]=='0':
             row_enc_mask[i]='0'
     row_enc_mask=''.join(row_enc_mask)
-#     print(row_enc_mask) #GAN的输入
+#     print(row_enc_mask) #The input of GAN
 #     print()
     return row_enc_mask, rowStrEnc, mask
 
@@ -168,13 +168,13 @@ f.close()
 f1.close()
 f2.close()
 
-#找最大值，SYN 960 Mirai 968
+#Find the maximum value, SYN 960 Mirai 968
 m=0
 for line in open("Mirai_vector.txt"):
-    m=max(m,len(line)-1) #不算'\n'
+    m=max(m,len(line)-1) #'\n' not counted
 print("m={0}".format(m))
 
-#长度统一为最大值，mal和ben分开存放
+#The length is unified to the maximum value, and mal and ben are stored separately
 #mirai
 f1 = open('Mirai_vector_mal.txt','w')
 f2 = open('Mirai_vector_ben.txt','w')
@@ -201,14 +201,14 @@ def init_weights(m):
         #nn.init.xavier_normal_(m.weight.data, gain=1)
         nn.init.xavier_uniform_(m.weight.data, gain=1)
         
-class Generator(nn.Module): #G 将从 进入生成器的随机噪音 获得均匀分布的数据样本，然后找到某种方式来模仿 真实数据集 中标准分布的样本。
-    def __init__(self, input_size, hidden_size, output_size, f): #一层隐层，两个线性映射
+class Generator(nn.Module): #G will obtain a uniformly distributed data sample from the "random noise entering the generator", and then find some way to mimic the standard distributed sample in the "real data set".
+    def __init__(self, input_size, hidden_size, output_size, f): #One hidden layer, two linear mappings
         super(Generator, self).__init__()
         self.map1 = nn.Linear(input_size, hidden_size)
 #         self.map2 = nn.Linear(hidden_size, hidden_size)
 #         self.map3 = nn.Linear(hidden_size, hidden_size)
         self.map4 = nn.Linear(hidden_size, output_size)
-        self.f = f #激活函数
+        self.f = f #Activation function
  
     def forward(self, x):
         x = self.f(self.map1(x))
@@ -216,7 +216,7 @@ class Generator(nn.Module): #G 将从 进入生成器的随机噪音 获得均�
 #         x = self.f(self.map3(x))
         return self.f(self.map4(x))
 
-class Discriminator(nn.Module): #和 G 代码一样。从 R 或 G 那里获得样本，然后输出 0 或 1 的判别值。这几乎是神经网络的最弱版本
+class Discriminator(nn.Module): #Same code as G. Obtain a sample from R or G, and then output a 0 or 1 discriminant value. This is almost the weakest version of the neural network.
     def __init__(self, input_size, hidden_size, output_size, f):
         super(Discriminator, self).__init__()
         self.map1 = nn.Linear(input_size, hidden_size)
@@ -308,7 +308,7 @@ def decode(s, original_s):
 #         idx = idx + 1
 #     f.close()
     
-def gen_vectors_2_packets(gen_examples_numpy, idx, K, threshold): #idx是[1 1 1]的格式
+def gen_vectors_2_packets(gen_examples_numpy, idx, K, threshold): #idx is the format of [1 1 1]
     rowStrEncs = load_data_str('Mirai_rowStrEnc.txt')
     masks = load_data_str('Mirai_mask.txt')
     gen_examples_str = []
@@ -323,7 +323,7 @@ def gen_vectors_2_packets(gen_examples_numpy, idx, K, threshold): #idx是[1 1 1]
         gen_examples_str.append(one_example)
     
     for i in range(len(gen_examples_str)):
-        length = len(rowStrEncs[idx[i]])-1 #最后有'\n'
+        length = len(rowStrEncs[idx[i]])-1 #There is'\n' at the end
         rowStrEnc = rowStrEncs[idx[i]][0:length]
         row_restore = list(gen_examples_str[i][0:length])
         for j in range(length):
@@ -349,7 +349,7 @@ def gen_vectors_2_packets(gen_examples_numpy, idx, K, threshold): #idx是[1 1 1]
 #     print("4************************************************")
     return np.array(y_kitsune), Row_split
 
-def compute_TPR(y_kitsune, y_mal): #y_kitsune是[1 1 1]的格式, y_mal是[[1] [1] [1]]的格式
+def compute_TPR(y_kitsune, y_mal): #y_kitsune is in the format of [1 1 1], y_mal is in the format of [[1] [1] [1]]
     positive_sum = y_mal.shape[0]
     positive_num = 0
     for i in range (0, y_kitsune.shape[0]):
@@ -369,15 +369,15 @@ d_hidden_size = int(math.sqrt(d_input_size+d_output_size)+10)
 
 epochs = 100+1
 batch_size = 32
-print_interval = 10 #每100个样本打印一次信息
+print_interval = 10 #Print information every 10 samples
 
 d_learning_rate = 5e-5
 g_learning_rate = 5e-5
 sgd_momentum = 0.9
-clip = [-0.01, 0.01] #用来截断w（第三个改进点）
+clip = [-0.01, 0.01] #Used to truncate w (the third improvement point)
 
 d_steps = 5 # 'k' steps in the original GAN paper. Can put the discriminator on higher training freq than generator
-g_steps = 1 #先迭代d_steps次判别器，再迭代g_steps次生成器
+g_steps = 1 #First iterate the discriminator d_steps times, then iterate the generator g_steps times
 
 discriminator_activation_function = torch.sigmoid
 generator_activation_function = torch.sigmoid
@@ -404,7 +404,7 @@ xmal = load_data('Mirai_vector_mal.txt')
 ymal = np.ones((xmal.shape[0], 1), dtype=np.int)
 xben = load_data('Mirai_vector_ben.txt')
 yben = np.zeros((xben.shape[0], 1), dtype=np.int)
-#还原操作需要知道样本的序号，以便对应rowStrEnc和mask，因此不能随机分配训练集和测试集
+#The restore operation needs to know the serial number of the sample in order to correspond to rowStrEnc and mask, so the training set and test set cannot be randomly allocated.
 train_size = int(xmal.shape[0] * 0.6)
 xtrain_mal = xmal[0:train_size, :]
 xtest_mal = xmal[train_size:, :]
@@ -451,23 +451,23 @@ for epoch in range(epochs):
         D.zero_grad()
 
         #  1A: Train D on real
-#         idx = np.random.randint(0, xtrain_ben.shape[0], batch_size) #随机选128个良性样本
+#         idx = np.random.randint(0, xtrain_ben.shape[0], batch_size) #Randomly select 128 benign samples
         idx = np.array(range(index_of_data_D_ben, index_of_data_D_ben+batch_size))
         index_of_data_D_ben += batch_size
         xben_batch = xtrain_ben[idx]
-        yben_batch = np.array(ytrain_ben_blackbox)[idx] #128个良性样本经过blackbox之后的新标签
+        yben_batch = np.array(ytrain_ben_blackbox)[idx]
         d_real_data = Variable(xben_batch)
         d_real_decision = D(d_real_data)
 #             print("d_real_decision:{0}".format(d_real_decision.reshape(-1)))
 #             d_real_decision = Variable(torch.Tensor(np.ones(d_real_decision.shape)*(d_real_decision.data.numpy() > 0.5)))
-        #d_real_error = criterion(d_real_decision.reshape(-1), Variable(torch.Tensor(yben_batch).reshape(-1))) #reshape(-1) 变为一行
+        #d_real_error = criterion(d_real_decision.reshape(-1), Variable(torch.Tensor(yben_batch).reshape(-1))) #reshape(-1) Becomes a line
         d_real_error = torch.mean(d_real_decision.reshape(-1))
         d_real_error.backward(benign)
         #d_real_error.backward() # compute/store gradients, but don't change params
 
         #  1B: Train D on fake
-#        idx = np.random.randint(0, xtrain_mal.shape[0], batch_size) #从训练恶意样本中随机选128个样本 idx: numpy.ndarray
-        idx = np.array(range(index_of_data_D_mal, index_of_data_D_mal+batch_size)) #放到kitsune检测的对抗样本不能随机选，要按时间顺序
+#        idx = np.random.randint(0, xtrain_mal.shape[0], batch_size) #Randomly select 128 samples from the training malicious samples idx: numpy.ndarray
+        idx = np.array(range(index_of_data_D_mal, index_of_data_D_mal+batch_size)) #The adversarial samples to be tested by kitsune cannot be randomly selected, but in chronological order.
         index_of_data_D_mal += batch_size
         xmal_batch = xtrain_mal[idx]    
         np.random.seed(0)
@@ -576,7 +576,7 @@ if matplotlib_is_available:
     plt.xticks(x_ticks, [i*10 for i in x_ticks])
     plt.xlabel("Epoch")
     plt.ylabel("TPR")
-    plt.legend() #为每条折线添加图例
+    plt.legend() #Add a legend for each polyline
     figname = "./figures/mirai_TPR.pdf"
     plt.savefig(figname)
     plt.show()
