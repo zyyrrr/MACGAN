@@ -78,15 +78,15 @@ class FE:
         ### open readers ##
         if self.parse_type == "tsv":
             maxInt = sys.maxsize
-            decrement = True #递减，消耗
+            decrement = True #Decrease, consumption
             while decrement:
                 # decrease the maxInt value by factor 10
                 # as long as the OverflowError occurs.
                 decrement = False
                 try:
-                    csv.field_size_limit(maxInt) #设置最大字段长度
+                    csv.field_size_limit(maxInt) #Set the maximum field length
                 except OverflowError:
-                    maxInt = int(maxInt / 10) #溢出则缩小最大字段长度
+                    maxInt = int(maxInt / 10) #Reduce the maximum field length if overflow
                     decrement = True
 
             print("counting lines in file...")
@@ -94,7 +94,7 @@ class FE:
             print("There are " + str(num_lines) + " Packets.")
             self.limit = min(self.limit, num_lines-1)
             self.tsvinf = open(self.path, 'rt', encoding="utf8")
-            self.tsvin = csv.reader(self.tsvinf, delimiter='\t') #reader方法只会读一次，读后就删掉
+            self.tsvin = csv.reader(self.tsvinf, delimiter='\t') #The reader method will only read once and delete it after reading
             row = self.tsvin.__next__() #move iterator past header
 
         else: # scapy
